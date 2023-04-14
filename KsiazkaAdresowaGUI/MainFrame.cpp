@@ -74,6 +74,9 @@ void MainFrame::CreateControls()
 	};
 	contactTable->SetCellHighlightPenWidth(0);
 	contactTable->SetCellHighlightROPenWidth(0);
+	contactTable->SetSelectionMode(wxGrid::wxGridSelectionModes::wxGridSelectRows);
+	contactTable->DisableDragColSize();
+	contactTable->DisableDragRowSize();
 
 	contactSearchTable = new wxGrid(panel, wxID_ANY, wxPoint(10, 50), wxSize(1480, 350));
 	contactSearchTable->CreateGrid(0, 7);
@@ -105,8 +108,11 @@ void MainFrame::CreateControls()
 		contactSearchTable->SetColSize(search_num_cols - 1, search_width);
 		contactSearchTable->SetColAttr(search_num_cols - 1, attrRO);
 	}
+	contactSearchTable->SetSelectionMode(wxGrid::wxGridSelectionModes::wxGridSelectRows);
 	contactSearchTable->SetCellHighlightPenWidth(0);
 	contactSearchTable->SetCellHighlightROPenWidth(0);
+	contactSearchTable->DisableDragColSize();
+	contactSearchTable->DisableDragRowSize();
 	contactSearchTable->Hide();
 
 	addAContact = new wxButton(panel, wxID_ANY, "Dodaj", wxPoint(30, 410), wxSize(60, 23));
@@ -169,9 +175,6 @@ void MainFrame::CreateControls()
 void MainFrame::BindEventHandlers()
 {
 	this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnWindowClosed, this);
-
-	contactTable->Bind(wxEVT_GRID_CELL_LEFT_CLICK, &MainFrame::RowSelection, this);
-	contactSearchTable->Bind(wxEVT_GRID_CELL_LEFT_CLICK, &MainFrame::RowSelection, this);
 
 	Szukaj->Bind(wxEVT_BUTTON, &MainFrame::SearchContacts, this);
 	inputField->Bind(wxEVT_TEXT_ENTER, &MainFrame::SearchContacts, this);
@@ -297,23 +300,6 @@ void MainFrame::resetSearchContacts(wxCommandEvent& evt)
 	contactSearchTable->Hide();
 	isSearchGridVisible = false;
 	contactTable->Show();
-}
-
-void MainFrame::RowSelection(wxGridEvent& evt)
-{
-	try {
-		if (!isSearchGridVisible)
-		{
-			contactTable->SelectRow(evt.GetRow());
-		}
-		else {
-			contactSearchTable->SelectRow(evt.GetRow());
-		}
-	}
-	catch (...)
-	{
-		
-	}
 }
 
 void MainFrame::AddContactFromButton(wxCommandEvent &evt)
@@ -481,15 +467,16 @@ void MainFrame::AddToGrid()
 
 	if (isSearchGridVisible)
 	{
-		gridSize = contactSearchTable->GetNumberRows();
+		int gridSearchSize = contactSearchTable->GetNumberRows();
 		contactSearchTable->AppendRows(1);
-		contactSearchTable->SetCellValue(gridSize, 0, form->imiegrid);
-		contactSearchTable->SetCellValue(gridSize, 1, form->nazwiskogrid);
-		contactSearchTable->SetCellValue(gridSize, 2, form->numerTelgrid);
-		contactSearchTable->SetCellValue(gridSize, 3, form->adresgrid);
-		contactSearchTable->SetCellValue(gridSize, 4, form->kodPoczgrid);
-		contactSearchTable->SetCellValue(gridSize, 5, form->emailgrid);
-		contactSearchTable->SetCellValue(gridSize, 6, form->opisgrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 0, form->imiegrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 1, form->nazwiskogrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 2, form->numerTelgrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 3, form->adresgrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 4, form->kodPoczgrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 5, form->emailgrid);
+		contactSearchTable->SetCellValue(gridSearchSize, 6, form->opisgrid);
+		foundRowIndexes.push_back(gridSize);
 	}
 }
 

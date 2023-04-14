@@ -27,8 +27,6 @@ private:
 	void prevSearchContacts(wxCommandEvent& evt);
 	void resetSearchContacts(wxCommandEvent& evt);
 
-	void RowSelection(wxGridEvent& evt);
-
 	void DeleteContactFromButton(wxCommandEvent &evt);
 	void EditContactFromButton(wxCommandEvent &evt);
 	void AddContactFromButton(wxCommandEvent &evt);
